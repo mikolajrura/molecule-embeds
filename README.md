@@ -17,7 +17,7 @@ CC(=O)OC1=CC=CC=C1C(=O)O
 ```
 ````
 
-Or use the command palette (`Ctrl+P` → *Otwórz podgląd molekuły*), type SMILES and press **Enter** to embed it in the current note.
+Or use the command palette (`Ctrl+P` → *Open molecule viewer*), type SMILES and press **Enter** to embed it in the current note.
 
 ## Install
 

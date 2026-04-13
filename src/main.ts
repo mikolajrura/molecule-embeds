@@ -23,7 +23,7 @@ export default class MoleculeViewerPlugin extends Plugin {
 
     this.addCommand({
       id: "open-molecule-viewer",
-      name: "Otwórz podgląd molekuły (SMILES)",
+      name: "Open molecule viewer",
       callback: () => {
         new MoleculeModal(this.app, this.rdkitLoading!).open();
       },
