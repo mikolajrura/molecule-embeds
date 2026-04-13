@@ -1,12 +1,5 @@
-// Singleton RDKit WASM module loader.
-// RDKit is heavy (~10MB WASM), load once and reuse.
-
-declare global {
-  interface Window {
-    initRDKitModule: () => Promise<RDKitModule>;
-    RDKit: RDKitModule | null;
-  }
-}
+// Load RDKit WASM from the local plugin directory (no internet needed).
+// RDKit_minimal.js and RDKit_minimal.wasm must sit next to main.js.
 
 export interface RDKitMol {
   get_svg(): string;
@@ -18,33 +11,26 @@ export interface RDKitMol {
 
 export interface RDKitModule {
   get_mol(smiles: string): RDKitMol;
-  get_mol_from_smiles(smiles: string): RDKitMol;
   version(): string;
 }
 
 let rdkitPromise: Promise<RDKitModule> | null = null;
 
-export async function loadRDKit(): Promise<RDKitModule> {
+export function loadRDKit(): Promise<RDKitModule> {
   if (rdkitPromise) return rdkitPromise;
 
-  rdkitPromise = new Promise((resolve, reject) => {
-    // RDKit bundles a self-contained WASM init function.
-    // We load it from the CDN since bundling WASM into Obsidian plugins is complex.
-    const script = document.createElement("script");
-    script.src =
-      "https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/RDKit_minimal.js";
-    script.onload = async () => {
-      try {
-        const mod = await (window as any).initRDKitModule();
-        (window as any).RDKit = mod;
-        resolve(mod);
-      } catch (e) {
-        reject(e);
-      }
-    };
-    script.onerror = () => reject(new Error("Failed to load RDKit script"));
-    document.head.appendChild(script);
-  });
+  rdkitPromise = (async () => {
+    // Use Node.js require (available in Electron/Obsidian).
+    // eval('require') prevents esbuild from trying to bundle the dynamic path.
+    // __dirname points to the plugin folder where RDKit_minimal.js lives.
+    const nodeRequire = eval("require") as NodeRequire;
+    const path = nodeRequire("path") as typeof import("path");
+    const rdkitJsPath = path.join(__dirname, "RDKit_minimal.js");
+    const initRDKitModule = nodeRequire(rdkitJsPath) as (
+      opts?: object
+    ) => Promise<RDKitModule>;
+    return await initRDKitModule();
+  })();
 
   return rdkitPromise;
 }
