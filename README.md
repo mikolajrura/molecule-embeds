@@ -1,6 +1,6 @@
 # Molecule Embeds
 
-Obsidian plugin that renders **SMILES** strings as beautiful 2D skeletal molecular graphs, powered by [RDKit.js](https://github.com/rdkit/rdkit).
+Obsidian plugin that renders **SMILES** strings as 2D skeletal molecular graphs, powered by [RDKit.js](https://github.com/rdkit/rdkit).
 
 - Black background, white bonds
 - Heteroatoms coloured: O = red, N = blue, S = green
@@ -35,3 +35,5 @@ cd molecule-embeds
 npm install
 npm run build
 ```
+
+Thanks claude, I just needed such plugin while taking pharmacology notes and prompted it during the class XD
