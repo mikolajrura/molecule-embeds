@@ -29,7 +29,7 @@ export function loadRDKit(pluginDir: string): Promise<RDKitModule> {
     const rdkitJsPath = path.join(pluginDir, "RDKit_minimal.js");
     const wasmPath = path.join(pluginDir, "RDKit_minimal.wasm");
 
-    console.log("Molecule Viewer: loading RDKit from", rdkitJsPath);
+    console.log("Molecule Embeds: loading RDKit from", rdkitJsPath);
 
     // Read script and evaluate in global scope (indirect eval)
     const script = fs.readFileSync(rdkitJsPath, "utf-8");
@@ -48,7 +48,7 @@ export function loadRDKit(pluginDir: string): Promise<RDKitModule> {
     const wasmBinary = fs.readFileSync(wasmPath);
     const mod = await initFn({ wasmBinary });
 
-    console.log("Molecule Viewer: RDKit ready, version", mod.version());
+    console.log("Molecule Embeds: RDKit ready, version", mod.version());
     return mod;
   })();
 

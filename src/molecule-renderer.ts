@@ -17,7 +17,8 @@ const DRAW_DETAILS = JSON.stringify({
   width: 650,
   height: 500,
   bondLineWidth: 1.2,
-  backgroundColour: [0, 0, 0, 1],
+  backgroundColour: [0, 0, 0, 0],
+  clearBackground: false,
   atomColourPalette: ATOM_COLOURS,
   addAtomIndices: false,
   addBondIndices: false,
@@ -27,9 +28,12 @@ const DRAW_DETAILS = JSON.stringify({
 });
 
 function patchSvgBackground(svg: string): string {
+  // Drop any opaque white background rect, then make white bonds/labels (carbon)
+  // follow the Obsidian theme via currentColor (see .mol-container in styles.css).
   return svg
-    .replace(/fill:#ffffff[^"]*"/gi, 'fill:#000000"')
-    .replace(/fill:white[^"]*"/gi, 'fill:black"');
+    .replace(/fill:#ffffff[^"]*"/gi, 'fill:none"')
+    .replace(/fill:white[^"]*"/gi, 'fill:none"')
+    .replace(/#ffffff/gi, "currentColor");
 }
 
 function autoSize(svg: string, containerWidth: number): string {
@@ -45,7 +49,12 @@ function autoSize(svg: string, containerWidth: number): string {
 }
 
 async function svgToPngBlob(svgEl: SVGSVGElement): Promise<Blob> {
-  const svgData = new XMLSerializer().serializeToString(svgEl);
+  // currentColor won't resolve in a detached SVG, so pin the carbon colour
+  // to the active Obsidian theme on a clone before rasterising.
+  const clone = svgEl.cloneNode(true) as SVGSVGElement;
+  const isDark = document.body.classList.contains("theme-dark");
+  clone.style.color = isDark ? "#ffffff" : "#1a1a1a";
+  const svgData = new XMLSerializer().serializeToString(clone);
   const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
   const url = URL.createObjectURL(svgBlob);
 
@@ -115,7 +124,7 @@ export function renderMolecule(
       copyBtn.addClass("mol-copy-btn--done");
       setTimeout(() => copyBtn.removeClass("mol-copy-btn--done"), 1200);
     } catch (e) {
-      console.error("Molecule Viewer: copy failed", e);
+      console.error("Molecule Embeds: copy failed", e);
     }
   });
 }
