@@ -26,4 +26,4 @@ for f in $FILES; do
 done
 
 echo ""
-echo "Done. Restart Obsidian → Settings → Community plugins → enable Molecule Viewer."
+echo "Done. Restart Obsidian → Settings → Community plugins → enable Molecule Embeds."

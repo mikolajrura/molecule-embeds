@@ -3,12 +3,12 @@ import { loadRDKit, RDKitModule } from "./rdkit-loader";
 import { renderMolecule } from "./molecule-renderer";
 import { MoleculeModal } from "./molecule-modal";
 
-export default class MoleculeViewerPlugin extends Plugin {
+export default class MoleculeEmbedsPlugin extends Plugin {
   private rdkit: RDKitModule | null = null;
   private rdkitLoading: Promise<RDKitModule> | null = null;
 
   async onload() {
-    console.log("Molecule Viewer: loading plugin");
+    console.log("Molecule Embeds: loading plugin");
 
     // Resolve plugin folder via Obsidian's vault adapter
     const basePath = (this.app.vault.adapter as any).getBasePath() as string;
@@ -17,7 +17,7 @@ export default class MoleculeViewerPlugin extends Plugin {
     // Start loading RDKit in the background immediately
     this.rdkitLoading = loadRDKit(pluginDir).then((mod) => {
       this.rdkit = mod;
-      console.log(`Molecule Viewer: RDKit loaded (${mod.version()})`);
+      console.log(`Molecule Embeds: RDKit loaded (${mod.version()})`);
       return mod;
     });
 
@@ -56,7 +56,7 @@ export default class MoleculeViewerPlugin extends Plugin {
         loading.remove();
       } catch (e) {
         loading.setText(
-          "Failed to load RDKit. Check your internet connection."
+          "Failed to load RDKit. Try reinstalling the plugin (RDKit_minimal.js / .wasm may be missing)."
         );
         loading.addClass("mol-error");
         return;
@@ -67,6 +67,6 @@ export default class MoleculeViewerPlugin extends Plugin {
   }
 
   onunload() {
-    console.log("Molecule Viewer: unloading plugin");
+    console.log("Molecule Embeds: unloading plugin");
   }
 }
