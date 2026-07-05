@@ -56,7 +56,7 @@ export default class MoleculeViewerPlugin extends Plugin {
         loading.remove();
       } catch (e) {
         loading.setText(
-          "Failed to load RDKit. Check your internet connection."
+          "Failed to load RDKit. Try reinstalling the plugin (RDKit_minimal.js / .wasm may be missing)."
         );
         loading.addClass("mol-error");
         return;
